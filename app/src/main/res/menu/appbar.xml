@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/newButton"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="@string/action_new"
+        android:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/nextButton"
+        android:icon="@android:drawable/ic_media_next"
+        android:title="@string/action_next"
+        android:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/prevButton"
+        android:icon="@android:drawable/ic_media_previous"
+        android:title="@string/action_prev"
+        android:showAsAction="always" />
+</menu>
