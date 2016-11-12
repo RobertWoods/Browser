@@ -1,32 +1,48 @@
 package edu.temple.browser;
 
-import android.app.Activity;
-import android.app.FragmentManager;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toolbar;
-import android.webkit.WebView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends Activity implements NavigationFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements NavigationFragment.OnFragmentInteractionListener{
 
     ArrayList<WebViewFragment> webFragments = new ArrayList<WebViewFragment>(1);
-    int currentWebFragment = 0;
+    FragmentPagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setActionBar(toolbar);
-    
-        FragmentManager fm = getFragmentManager();
+        setSupportActionBar(toolbar);
+
+        pagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                return webFragments.get(position);
+            }
+
+            @Override
+            public int getCount() {
+                return webFragments.size();
+            }
+        };
+
+        ViewPager vp = (ViewPager) findViewById(R.id.browserFrame);
+        vp.setAdapter(pagerAdapter);
+        vp.setOffscreenPageLimit(10);
+
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
         WebViewFragment webViewFrag = new WebViewFragment();
         Uri data = getIntent().getData();
         Bundle bundle = new Bundle();
@@ -34,9 +50,9 @@ public class MainActivity extends Activity implements NavigationFragment.OnFragm
                 data != null ? data.toString() : "https://google.com");
         webFragments.add(webViewFrag);
         webViewFrag.setArguments(bundle);
+        pagerAdapter.notifyDataSetChanged();
         NavigationFragment navFrag = new NavigationFragment();
-        fm.beginTransaction().replace(R.id.browserFrame, webViewFrag)
-                .replace(R.id.navigationFrame, navFrag).commit();
+        fm.beginTransaction().replace(R.id.navigationFrame, navFrag).commit();
     }
 
     @Override
@@ -44,12 +60,6 @@ public class MainActivity extends Activity implements NavigationFragment.OnFragm
         switch(item.getItemId()){
             case R.id.newButton:
                 onNew();
-                break;
-            case R.id.nextButton:
-                onNext();
-                break;
-            case R.id.prevButton:
-                onPrev();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -61,45 +71,21 @@ public class MainActivity extends Activity implements NavigationFragment.OnFragm
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inf = getMenuInflater();
         inf.inflate(R.menu.appbar, menu);
-        return true;
-    }
-
-    public void onNext() {
-        try {
-            WebViewFragment webViewFrag = webFragments.get(currentWebFragment+1);
-            currentWebFragment++;
-            getFragmentManager().beginTransaction().hide(webFragments.get(currentWebFragment-1))
-                    .show(webViewFrag)
-                    .commit();
-        } catch(IndexOutOfBoundsException e) {
-            Toast.makeText(this, "No more pages", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void onPrev() {
-        try {
-            WebViewFragment webViewFrag = webFragments.get(currentWebFragment-1);
-            currentWebFragment--;
-            getFragmentManager().beginTransaction().hide(webFragments.get(currentWebFragment+1))
-                    .show(webViewFrag)
-                    .commit();
-        } catch(IndexOutOfBoundsException e) {
-            Toast.makeText(this, "No more pages", Toast.LENGTH_SHORT).show();
-        }
+        return super.onCreateOptionsMenu(menu);
     }
 
     public void onNew() {
         WebViewFragment webViewFrag = new WebViewFragment();
         webFragments.add(webViewFrag);
-        int oldWebFragment = currentWebFragment;
-        currentWebFragment = webFragments.size() - 1;
-        getFragmentManager().beginTransaction().hide(webFragments.get(oldWebFragment)).
-                add(R.id.browserFrame, webViewFrag)
-                .commit();
+        pagerAdapter.notifyDataSetChanged();
+        ((ViewPager) findViewById(R.id.browserFrame)).setCurrentItem(
+                pagerAdapter.getCount()-1);
     }
 
     @Override
     public void onTextEntered(String url) {
-        webFragments.get(currentWebFragment).navigateToUrl(url);
+        int curr = ((ViewPager) findViewById(R.id.browserFrame)).getCurrentItem();
+        Log.d("HEY", pagerAdapter.getItem(curr).toString());
+        ((WebViewFragment) pagerAdapter.getItem(curr)).navigateToUrl(url);
     }
 }

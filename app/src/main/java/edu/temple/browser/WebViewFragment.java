@@ -3,7 +3,8 @@ package edu.temple.browser;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,11 +44,15 @@ public class WebViewFragment extends Fragment {
     }
 
     public void navigateToUrl(String url){
-        if(!url.contains("http://")&&!url.contains("https://"))
-            url = "https://" + url ;
-        WebView wv = (WebView) getView().findViewById(R.id.mainWebView);
-        wv.setWebViewClient(new WebViewClient());
-        wv.loadUrl(url);
+        try {
+            if (!url.contains("http://") && !url.contains("https://"))
+                url = "https://" + url;
+            WebView wv = (WebView) getView().findViewById(R.id.mainWebView);
+            wv.setWebViewClient(new WebViewClient());
+            wv.loadUrl(url);
+        } catch (Exception e){
+            Log.e("Hey", e.toString());
+        }
     }
 
 }
