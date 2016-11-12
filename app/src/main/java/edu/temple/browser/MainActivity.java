@@ -25,7 +25,7 @@ public class MainActivity extends Activity implements NavigationFragment.OnFragm
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(toolbar);
-
+    
         FragmentManager fm = getFragmentManager();
         WebViewFragment webViewFrag = new WebViewFragment();
         Uri data = getIntent().getData();

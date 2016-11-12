@@ -28,6 +28,7 @@ public class WebViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View v =  inflater.inflate(R.layout.fragment_web_view, container, false);
         if(getArguments() != null && getArguments().getString(URL_FETCHER)!=null) {
             String url = getArguments().getString(URL_FETCHER);
