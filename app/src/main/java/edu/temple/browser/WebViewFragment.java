@@ -20,6 +20,8 @@ import android.widget.Toast;
 public class WebViewFragment extends Fragment {
 
     public final String URL_FETCHER = "ejfwoijoiejfaeoiwjf";
+    private final String URL_SAVER = "greasgregs";
+    private String oldUrl = "https://www.google.com";
 
     public WebViewFragment() {
         // Required empty public constructor
@@ -28,18 +30,13 @@ public class WebViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
         View v =  inflater.inflate(R.layout.fragment_web_view, container, false);
-        if(getArguments() != null && getArguments().getString(URL_FETCHER)!=null) {
-            String url = getArguments().getString(URL_FETCHER);
+        if(savedInstanceState!=null) {
+            oldUrl  = savedInstanceState.getString(URL_SAVER);
             ((WebView) v.findViewById(R.id.mainWebView)).setWebViewClient(new WebViewClient());
-            if(!url.toLowerCase().contains("http://")&&!url.toLowerCase().contains("https://"))
-                url = "https://" + url ;
-            ((WebView) v.findViewById(R.id.mainWebView)).loadUrl(url);
-        } else {
-            ((WebView) v.findViewById(R.id.mainWebView)).loadUrl("https://www.google.com");
+            Log.d("very interesting", oldUrl);
         }
+        ((WebView) v.findViewById(R.id.mainWebView)).loadUrl(oldUrl);
         return v;
     }
 
@@ -48,11 +45,20 @@ public class WebViewFragment extends Fragment {
             if (!url.contains("http://") && !url.contains("https://"))
                 url = "https://" + url;
             WebView wv = (WebView) getView().findViewById(R.id.mainWebView);
+            oldUrl = url;
             wv.setWebViewClient(new WebViewClient());
             wv.loadUrl(url);
         } catch (Exception e){
             Log.e("Hey", e.toString());
         }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle){
+        super.onSaveInstanceState(bundle);
+        Log.d("Saved", "---------------------------");
+        bundle.putString(URL_SAVER, oldUrl);
+    }
+
 
 }

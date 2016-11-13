@@ -3,6 +3,7 @@ package edu.temple.browser;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements NavigationFragment.OnFragmentInteractionListener{
 
     ArrayList<WebViewFragment> webFragments = new ArrayList<WebViewFragment>(1);
-    FragmentPagerAdapter pagerAdapter;
+    FragmentStatePagerAdapter pagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements NavigationFragmen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        pagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+        pagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
                 return webFragments.get(position);
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationFragmen
 
         ViewPager vp = (ViewPager) findViewById(R.id.browserFrame);
         vp.setAdapter(pagerAdapter);
-        vp.setOffscreenPageLimit(10);
+//        vp.setOffscreenPageLimit(10);
 
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
         WebViewFragment webViewFrag = new WebViewFragment();
