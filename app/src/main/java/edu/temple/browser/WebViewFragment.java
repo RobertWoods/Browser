@@ -1,7 +1,6 @@
 package edu.temple.browser;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.Toast;
 
 
 /**
@@ -21,7 +18,9 @@ public class WebViewFragment extends Fragment {
 
     public final String URL_FETCHER = "ejfwoijoiejfaeoiwjf";
     private final String URL_SAVER = "greasgregs";
+    private final String FLAG_SAVER = "dagergarga";
     private String oldUrl = "https://www.google.com";
+    private boolean readArguments = false;
 
     public WebViewFragment() {
         // Required empty public constructor
@@ -30,9 +29,15 @@ public class WebViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v =  inflater.inflate(R.layout.fragment_web_view, container, false);
-        if(savedInstanceState!=null) {
-            oldUrl  = savedInstanceState.getString(URL_SAVER);
+        View v = inflater.inflate(R.layout.fragment_web_view, container, false);
+        readArguments = savedInstanceState != null ? savedInstanceState.getBoolean(FLAG_SAVER, false)
+                : readArguments;
+        if (getArguments() != null && !readArguments) {
+            ((WebView) v.findViewById(R.id.mainWebView)).setWebViewClient(new WebViewClient());
+            oldUrl = getArguments().getString(URL_FETCHER);
+            readArguments = true;
+        } else if (savedInstanceState != null) {
+            oldUrl = savedInstanceState.getString(URL_SAVER);
             ((WebView) v.findViewById(R.id.mainWebView)).setWebViewClient(new WebViewClient());
             Log.d("very interesting", oldUrl);
         }
@@ -40,7 +45,7 @@ public class WebViewFragment extends Fragment {
         return v;
     }
 
-    public void navigateToUrl(String url){
+    public void navigateToUrl(String url) {
         try {
             if (!url.contains("http://") && !url.contains("https://"))
                 url = "https://" + url;
@@ -48,16 +53,17 @@ public class WebViewFragment extends Fragment {
             oldUrl = url;
             wv.setWebViewClient(new WebViewClient());
             wv.loadUrl(url);
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e("Hey", e.toString());
         }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle bundle){
+    public void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
         Log.d("Saved", "---------------------------");
         bundle.putString(URL_SAVER, oldUrl);
+        bundle.putBoolean(FLAG_SAVER, readArguments);
     }
 
 

@@ -1,12 +1,11 @@
 package edu.temple.browser;
 
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -49,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements NavigationFragmen
         Bundle bundle = new Bundle();
         bundle.putString(webViewFrag.URL_FETCHER,
                 data != null ? data.toString() : "https://google.com");
-        webFragments.add(webViewFrag);
         webViewFrag.setArguments(bundle);
+        webFragments.add(webViewFrag);
         pagerAdapter.notifyDataSetChanged();
         NavigationFragment navFrag = new NavigationFragment();
         fm.beginTransaction().replace(R.id.navigationFrame, navFrag).commit();
